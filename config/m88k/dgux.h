@@ -70,7 +70,7 @@ Boston, MA 02111-1307, USA.  */
 #define CPU_DEFAULT MASK_88000
 
 /* Macros to be automatically defined.  __svr4__ is our extension.
-   __CLASSIFY_TYPE__ is used in the <varargs.h> and <stdarg.h> header
+   __CLASSIFY_TYPE__ is used in the <stdarg.h> and <stdarg.h> header
    files with DG/UX revision 5.40 and later.  This allows GNU CC to
    operate without installing the header files.  */
 

@@ -139,7 +139,7 @@ the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.  */
 #define MD_STARTFILE_PREFIX "/usr/lib/"
 
 /* Macros to be automatically defined.  
-   __CLASSIFY_TYPE__ is used in the <varargs.h> and <stdarg.h> header
+   __CLASSIFY_TYPE__ is used in the <stdarg.h> and <stdarg.h> header
    files with DG/UX revision 5.40 and later.  This allows GNU CC to
    operate without installing the header files.  */
 

@@ -67,6 +67,7 @@ mandir='${prefix}/man'
 # Initialize some other variables.
 subdirs=
 MFLAGS= MAKEFLAGS=
+DEFS=
 # Maximum number of lines to put in a shell here document.
 ac_max_here_lines=12
 
@@ -4483,6 +4484,16 @@ for machine in $build $host $target; do
 		;;
 	mips-*-gnu*)
 		;;
+	mips-nintendo-nu64)		# Nintendo NU64
+		xm_file=mips/xm-sysv.h
+		tm_file=mips/nu64.h
+		elf=yes
+		gnu_ld=yes
+		gas=yes
+                xmake_file=mips/x-sysv
+                tmake_file=mips/t-mips-gas
+		DEFS=-DNU64
+		;;
 	mipsel-*-ecoff*)
 		tm_file=mips/ecoffl.h
 		if [ x$stabs = xyes ]; then
@@ -5810,7 +5821,7 @@ fi
 
 trap 'rm -f $CONFIG_STATUS conftest*; exit 1' 1 2 15
 
-DEFS=-DHAVE_CONFIG_H
+DEFS="-DHAVE_CONFIG_H $DEFS"
 
 # Without the "./", some shells look in PATH for config.status.
 : ${CONFIG_STATUS=./config.status}

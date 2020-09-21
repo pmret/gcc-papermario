@@ -27,7 +27,7 @@ Boston, MA 02111-1307, USA.  */
 #ifdef __STDC__
 #include <stdarg.h>
 #else
-#include <varargs.h>
+#include <stdarg.h>
 #endif
 #include <stdio.h>
 #include <signal.h>

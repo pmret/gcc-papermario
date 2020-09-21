@@ -1406,7 +1406,7 @@ duplicate_decls (newdecl, olddecl, different_binding_level)
   char *errmsg = 0;
 
   if (TREE_CODE_CLASS (TREE_CODE (olddecl)) == 'd')
-    DECL_MACHINE_ATTRIBUTES (newdecl) = DECL_MACHINE_ATTRIBUTES (olddecl);
+    DECL_MACHINE_ATTRIBUTES (newdecl) = merge_attributes(DECL_MACHINE_ATTRIBUTES (olddecl), DECL_MACHINE_ATTRIBUTES (newdecl));
 
   if (TREE_CODE (newtype) == ERROR_MARK
       || TREE_CODE (oldtype) == ERROR_MARK)

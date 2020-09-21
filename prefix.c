@@ -68,7 +68,7 @@ Boston, MA 02111-1307, USA.  */
 #ifdef __STDC__
 #include <stdarg.h>
 #else
-#include <varargs.h>
+#include <stdarg.h>
 #endif
 
 #ifdef _WIN32
@@ -80,7 +80,7 @@ static char *translate_name	PROTO((char *));
 static char *concat		PVPROTO((char *, ...));
 static char *save_string	PROTO((char *, int));
 
-#ifdef _WIN32
+#if (defined(_WIN32) && !defined(__CYGWIN32__))
 static char *lookup_key		PROTO((char *));
 static HKEY reg_key = (HKEY) INVALID_HANDLE_VALUE;
 #endif
@@ -95,7 +95,7 @@ get_key_value (key)
 {
   char *prefix = 0;
 
-#ifdef _WIN32
+#if (defined(_WIN32) && !defined(__CYGWIN32__))
   prefix = lookup_key (key);
 #endif
 
@@ -175,7 +175,7 @@ save_string (s, len)
   return result;
 }
 
-#ifdef _WIN32
+#if (defined(_WIN32) && !defined(__CYGWIN32__))
 
 /* Look up "key" in the registry, as above.  */
 

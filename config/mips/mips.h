@@ -3514,6 +3514,12 @@ while (0)
 
    See mips.c for the MIPS specific codes.  */
 
+/* A C expression whose value is nonzero if IDENTIFIER with arguments ARGS
+   is a valid machine specific attribute for DECL.
+   The attributes in ATTRIBUTES have previously been assigned to DECL.  */
+#define VALID_MACHINE_DECL_ATTRIBUTE(DECL, ATTRIBUTES, IDENTIFIER, ARGS) \
+  mips_valid_machine_decl_attribute(DECL, ATTRIBUTES, IDENTIFIER, ARGS)
+
 #define PRINT_OPERAND(FILE, X, CODE) print_operand (FILE, X, CODE)
 
 /* A C expression which evaluates to true if CODE is a valid

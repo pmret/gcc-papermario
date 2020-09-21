@@ -109,7 +109,7 @@ extern char *getenv ();
 # define PRINTF_DCL(msg)
 # define PRINTF_PROTO(ARGS, m, n) PROTO (ARGS) __attribute__ ((format (__printf__, m, n)))
 #else
-# include <varargs.h>
+# include <stdarg.h>
 # define PRINTF_ALIST(msg) msg, va_alist
 # define PRINTF_DCL(msg) char *msg; va_dcl
 # define PRINTF_PROTO(ARGS, m, n) () __attribute__ ((format (__printf__, m, n)))
@@ -1163,6 +1163,42 @@ safe_read (desc, ptr, len)
    retrying if necessary, and treating any real error as fatal.
    If MAX_WRITE_LEN is defined, write at most that many bytes at a time.  */
 
+#ifdef NU64
+enum { KANJI_OFF = 0, KANJI_SJIS, KANJI_EUC };
+static n64kanji_flag = KANJI_OFF;	/* by default, KANJI OFF mode */
+#define KANJIENV "N64GCC_KANJI"
+static void
+kanjienv_check ()
+{
+  char  *n64kanji_env;
+  n64kanji_env = getenv("N64GCC_KANJI");
+  if ( !strcasecmp( n64kanji_env, "SJIS" ) ) {
+    n64kanji_flag = KANJI_SJIS;
+  } else if ( !strcasecmp( n64kanji_env, "EUC" ) ) {
+    n64kanji_flag = KANJI_EUC;
+  } else if ( !strcasecmp( n64kanji_env, "OFF" ) ) {
+    n64kanji_flag = KANJI_OFF;
+  }
+}
+
+static int
+iskanji1( c )
+     U_CHAR c;
+{
+  switch ( n64kanji_flag ) {
+  case KANJI_OFF:
+    return 0;
+  case KANJI_EUC:
+    return (c >= 0xa1 && c <= 0xfe);
+  case KANJI_SJIS:
+  default:
+    return (c >= 0x81 && c <= 0x9f) || (c >= 0xe0 && c <= 0xfc);
+  }
+}
+
+#endif	/* NU64 */
+
+
 static void
 safe_write (desc, ptr, len)
      int desc;
@@ -1171,6 +1207,39 @@ safe_write (desc, ptr, len)
 {
   int wcount, written;
 
+#ifdef NU64
+  U_CHAR *rptr, *wbuf, *wptr;
+  int tlen, rlen = len;
+
+  if(n64kanji_flag != KANJI_OFF) {
+    rptr = ptr, wptr = NULL;
+    while(rlen--) {
+      U_CHAR c = *rptr++;
+      if (wptr) {
+	int wlen = wptr - wbuf;
+	if (tlen <= wlen + 8) {
+	  wbuf = (char *)realloc(wbuf, tlen += 0x1000);
+	  wptr = wbuf + wlen;
+	}
+      }
+      if ( iskanji1( c ) ) {
+	if (!wptr) {
+	  wbuf = (char *)malloc(tlen = len + 0x1000);
+	  memcpy(wbuf, ptr, len - rlen -1);
+	  wptr = wbuf + len - rlen - 1;
+        }
+	sprintf(wptr, "\\%03o", c), wptr += 4;
+	if (rlen--) sprintf(wptr, "\\%03o", *rptr++), wptr += 4;
+      } else {
+	if (wptr) *wptr++ = c;
+      }
+    }
+    if (wptr) {
+      ptr = wbuf;
+      len = wptr - wbuf;
+    }
+  }
+#endif
   while (len > 0) {
     wcount = len;
 #ifdef MAX_WRITE_LEN
@@ -1191,6 +1260,31 @@ safe_write (desc, ptr, len)
   }
 }
 
+#ifdef	NU64
+void
+nu64cutcr(bufp, lenp)
+char **bufp;
+int *lenp;
+{
+  char  *wptr, *rptr, *n64cutcr_env;
+  int    wsize = *lenp;
+  static n64cutcr_flag = -1;
+
+  if (n64cutcr_flag == -1) {
+    n64cutcr_env = getenv("N64GCC_CUTCR");
+    n64cutcr_flag = (n64cutcr_env && !strcasecmp(n64cutcr_env, "ON") ? 1:0);
+  }
+  if (n64cutcr_flag) {
+    wptr = rptr = *bufp;
+    while(wsize--) {
+      if (*rptr == 0x0d && rptr[1] == 0x0a && wsize) rptr++, wsize--, (*lenp)--;
+      *wptr++ = *rptr++;
+    }
+    if ((*bufp)[(*lenp)-1] == 0x1a) (*bufp)[--(*lenp)] = '\0';
+  }
+}
+#endif
+
 int
 main (argc, argv)
      int argc;
@@ -1876,6 +1970,10 @@ main (argc, argv)
     }
   }
 
+#ifdef NU64
+  kanjienv_check();
+#endif
+
   append_include_chain (before_system, last_before_system);
   first_system_include = before_system;
 
@@ -2107,6 +2205,9 @@ main (argc, argv)
       fp->buf = (U_CHAR *) xrealloc (fp->buf, bsize + 2);
     }
     fp->length = size;
+#ifdef	NU64
+    nu64cutcr(&fp->buf, &fp->length);
+#endif
   } else {
     /* Read a file whose size we can determine in advance.
        For the sake of VMS, st.st_size is just an upper bound.  */
@@ -2116,6 +2217,9 @@ main (argc, argv)
     fp->buf = (U_CHAR *) xmalloc (s + 2);
     fp->length = safe_read (f, (char *) fp->buf, s);
     if (fp->length < 0) goto perror;
+#ifdef	NU64
+    nu64cutcr(&fp->buf, &fp->length);
+#endif
   }
   fp->bufp = fp->buf;
   fp->if_stack = if_stack;
@@ -2788,6 +2892,12 @@ do { ip = &instack[indepth];		\
 	  break;
 	}
 	*obp++ = *ibp;
+#ifdef NU64
+	if ( iskanji1(*ibp) ) {
+	  ibp++, *obp++ = *ibp++;
+	  continue;
+	}
+#endif
 	switch (*ibp++) {
 	case '\n':
 	  ++ip->lineno;
@@ -2870,7 +2980,11 @@ do { ip = &instack[indepth];		\
 
 	  while (++ibp < limit) {
 	    if (*ibp == '\n') {
+#ifdef NU64
+	      if (ibp[-1] != '\\' || iskanji1( ibp[-2] )) {
+#else
 	      if (ibp[-1] != '\\') {
+#endif
 		if (put_out_comments) {
 		  bcopy ((char *) before_bp, (char *) obp, ibp - before_bp);
 		  obp += ibp - before_bp;
@@ -3352,7 +3466,12 @@ randomchar:
 			} else if (! traditional) {
 			  *obp++ = ' ';
 			}
+#ifdef NU64
+			for (ibp += 2; *ibp != '\n' || ibp[-1] == '\\' ||
+			       !iskanji1( ibp[-2] ); ibp++)
+#else
 			for (ibp += 2; *ibp != '\n' || ibp[-1] == '\\'; ibp++)
+#endif
 			  if (put_out_comments)
 			    *obp++ = *ibp;
 		      } else
@@ -5057,6 +5176,9 @@ finclude (f, inc, op, system_header_p, dirptr)
        on the number of bytes we can read.  */
     fp->length = safe_read (f, (char *) fp->buf, s);
     if (fp->length < 0) goto nope;
+#ifdef	NU64
+    nu64cutcr(&fp->buf, &fp->length);
+#endif
   }
   else if (S_ISDIR (inc->st.st_mode)) {
     error ("directory `%s' specified in #include", fname);
@@ -5084,6 +5206,9 @@ finclude (f, inc, op, system_header_p, dirptr)
     }
     fp->bufp = fp->buf;
     fp->length = st_size;
+#ifdef	NU64
+    nu64cutcr(&fp->buf, &fp->length);
+#endif
   }
 
   if ((fp->length > 0 && fp->buf[fp->length - 1] != '\n')
@@ -5177,6 +5302,9 @@ check_precompiled (pcf, st, fname, limit)
       length = safe_read (pcf, buf, s);
       if (length < 0)
 	goto nope;
+#ifdef	NU64
+    nu64cutcr(&buf, &length);
+#endif
     }
   else
     abort ();
@@ -7645,6 +7773,9 @@ skip_to_end_of_comment (ip, line_counter, nowarn)
       if (*bp == '\n') {
 	if (bp[-1] != '\\')
 	  break;
+#ifdef NU64
+	if ( iskanji1( bp[-2] ) ) break;
+#endif
 	if (!nowarn && warn_comments)
 	  warning ("multiline `//' comment");
 	if (line_counter)

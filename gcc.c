@@ -49,7 +49,7 @@ compilation is specified by a string called a "spec".  */
 #ifdef __STDC__
 #include <stdarg.h>
 #else
-#include <varargs.h>
+#include <stdarg.h>
 #endif
 #include <stdio.h>
 

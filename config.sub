@@ -616,6 +616,10 @@ case $basic_machine in
         xps | xps100)
 		basic_machine=xps100-honeywell
 		;;
+	nu64)
+		basic_machine=mips-nintendo
+		os=-nu64
+		;;
 	none)
 		basic_machine=none-none
 		os=-none
@@ -775,6 +779,9 @@ case $os in
 	-xenix)
 		os=-xenix
 		;;
+	-nu64)
+		os=-nu64
+		;;
 	-none)
 		;;
 	*)
@@ -892,6 +899,9 @@ case $basic_machine in
 		;;
 	f301-fujitsu)
 		os=-uxpv
+		;;
+	*-nu64)
+		os=-nu64
 		;;
 	*)
 		os=-none

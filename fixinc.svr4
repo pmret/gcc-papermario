@@ -1416,7 +1416,7 @@ if [ -r ${INPUT}/$file ]; then
 #ifdef __STDC__
 #include <stdarg.h>
 #else
-#include <varargs.h>
+#include <stdarg.h>
 #endif
 
 #endif  /* _SYS_VARARGS_H */
