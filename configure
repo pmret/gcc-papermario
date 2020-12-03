@@ -3161,6 +3161,9 @@ for machine in $build $host $target; do
 		;;
 	i370-*-mvs*)
 		;;
+	i[34567]86-apple-darwin)	#macOS
+		xm_file=i386/xm-darwin.h
+		;;
 	i[34567]86-ibm-aix*)		# IBM PS/2 running AIX
                 if [ x$gas = xyes ]
 		then
