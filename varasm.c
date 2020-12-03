@@ -29,6 +29,7 @@ Boston, MA 02111-1307, USA.  */
 #include "config.h"
 #include <stdio.h>
 #include <setjmp.h>
+#include <stdint.h>
 /* #include <stab.h> */
 #include "rtl.h"
 #include "tree.h"
@@ -2265,8 +2266,9 @@ immed_real_const_1 (d, mode)
      If one is found, return it.  */
 
   for (r = const_double_chain; r; r = CONST_DOUBLE_CHAIN (r))
-    if (! bcmp ((char *) &CONST_DOUBLE_LOW (r), (char *) &u, sizeof u)
-	&& GET_MODE (r) == mode)
+    if (! bcmp ((char *) &CONST_DOUBLE_LOW (r), (char *) &u, sizeof u / 2) &&
+        ! bcmp ((char *) &CONST_DOUBLE_HIGH (r), ((char *) &u) + (sizeof u / 2), sizeof u / 2)
+  && GET_MODE (r) == mode)
       return r;
 
   /* No; make a new one and add it to the chain.
@@ -2281,7 +2283,8 @@ immed_real_const_1 (d, mode)
   rtl_in_saveable_obstack ();
   r = rtx_alloc (CONST_DOUBLE);
   PUT_MODE (r, mode);
-  bcopy ((char *) &u, (char *) &CONST_DOUBLE_LOW (r), sizeof u);
+  bcopy ((char *) &u, (char *) &CONST_DOUBLE_LOW (r), sizeof u / 2);
+  bcopy (((char *) &u) + + (sizeof u / 2), (char *) &CONST_DOUBLE_HIGH (r), sizeof u / 2);
   pop_obstacks ();
 
   /* Don't touch const_double_chain in nested function; see force_const_mem.
