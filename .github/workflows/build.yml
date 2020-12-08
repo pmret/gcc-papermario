@@ -1,0 +1,55 @@
+name: Compile cc1
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.TARGET.OS }}
+    strategy:
+      fail-fast: false
+      matrix:
+        TARGET:
+          - {
+              OS: 'ubuntu-latest',
+              CFLAGS: '-std=gnu89 -m32 -static',
+              HOST: 'i386-pc-linux'
+            }
+          - {
+              OS: 'macos-latest',
+              CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
+              HOST: 'i386-apple-darwin'
+            }
+
+    name: Building cc1 for ${{ matrix.TARGET.OS }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies (Ubuntu)
+        shell: bash
+        if: matrix.TARGET.OS == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bison file gcc-multilib gperf
+
+      - name: Configure
+        shell: bash
+        run: |
+          ./configure --target=mips-nintendo-nu64 --prefix=/opt/cross --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
+
+      - name: Make
+        continue-on-error: true
+        shell: bash
+        run: |
+          make CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+
+      - name: Test for file
+        shell: bash
+        run: |
+          test -f cc1
+          file cc1
+
+      - name: Upload output
+        uses: actions/upload-artifact@v2
+        with:
+          name: cc1-${{ matrix.TARGET.OS }}
+          path: cc1
