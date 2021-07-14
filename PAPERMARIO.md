@@ -25,3 +25,4 @@ To build the 64-bit cc1 for macOS, use:
 > make CFLAGS="-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration"
 > ```
 > The `make` stage may fail, but this is fine as long as the `cc1` binary is created successfully.
+
