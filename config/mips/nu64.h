@@ -130,3 +130,7 @@ sdata_section ()							\
 %(long_max_spec) \
 %(subtarget_cpp_spec) "
 
+#define ASM_OUTPUT_SECTION_NAME(FILE, DECL, NAME, RELOC)\
+  do {						\
+    fprintf (FILE, "\t.section %s\n", NAME);	\
+  } while (0)
