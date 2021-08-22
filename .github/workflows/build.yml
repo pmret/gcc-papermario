@@ -40,13 +40,15 @@ jobs:
       - name: Configure
         shell: bash
         run: |
-          ./configure --target=mips-nintendo-nu64 --prefix=/opt/cross --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
+          ./configure --target=mips-nintendo-nu64 --prefix=/opt/cross --with-gnu-as --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
 
       - name: Make
         continue-on-error: true
         shell: bash
         run: |
-          make CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+          make cpp CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+          make cc1 CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+          make xgcc CFLAGS="${{ matrix.TARGET.CFLAGS }}"
 
       - name: Test for file
         shell: bash
@@ -58,4 +60,8 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: cc1-${{ matrix.TARGET.OS }}
-          path: cc1
+          path: |
+            as
+            cpp
+            cc1
+            xgcc
