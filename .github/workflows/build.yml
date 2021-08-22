@@ -13,13 +13,13 @@ jobs:
               OS: 'ubuntu-latest',
               CFLAGS: '-std=gnu89 -m32 -static',
               HOST: 'i386-pc-linux',
-              ARCHIVE_NAME: 'linux.tar.gz'
+              ARCHIVE_NAME: 'linux.tar'
             }
           - {
               OS: 'macos-latest',
               CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
               HOST: 'i386-apple-darwin',
-              ARCHIVE_NAME: 'mac.tar.gz'
+              ARCHIVE_NAME: 'mac.tar'
             }
 
     name: Building cc1 for ${{ matrix.TARGET.OS }}
@@ -73,16 +73,16 @@ jobs:
         shell: bash
         run: |
           tar -uf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp
-          tar -z ${{ matrix.TARGET.ARCHIVE_NAME }}
+          gzip -9 ${{ matrix.TARGET.ARCHIVE_NAME }}
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
-          name: cc1-${{ matrix.TARGET.OS }}
+          name: gcc-2.7.1-${{ matrix.TARGET.OS }}
           path: |
-            ${{ matrix.TARGET.ARCHIVE_NAME }}
+            ${{ matrix.TARGET.ARCHIVE_NAME }}.gz
       - name: Update release
         uses: johnwbyrd/update-release@v1.0.0
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: ${{ matrix.TARGET.ARCHIVE_NAME }}
+          files: ${{ matrix.TARGET.ARCHIVE_NAME }}.gz
