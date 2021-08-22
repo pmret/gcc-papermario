@@ -48,8 +48,6 @@ jobs:
           make cpp CFLAGS="${{ matrix.TARGET.CFLAGS }}"
           make cc1 CFLAGS="${{ matrix.TARGET.CFLAGS }}"
           make xgcc CFLAGS="${{ matrix.TARGET.CFLAGS }}"
-          make cc1plus CFLAGS="${{ matrix.TARGET.CFLAGS }}"
-          make g++ CFLAGS="${{ matrix.TARGET.CFLAGS }}"
       - name: Test for file
         shell: bash
         run: |
