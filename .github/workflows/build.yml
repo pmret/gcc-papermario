@@ -37,11 +37,11 @@ jobs:
           sudo apt update
           sudo apt install -y gcc-6 gcc-6-multilib
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 1
-      - name: Configure
+      - name: Configure for mips-nintendo-nu64
         shell: bash
         run: |
           ./configure --target=mips-nintendo-nu64 --prefix=/opt/cross --with-gnu-as --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
-      - name: Make
+      - name: Make everything except cpp
         continue-on-error: true
         shell: bash
         run: |
@@ -51,21 +51,34 @@ jobs:
         run: |
           test -f cc1
           file cc1
-      - name: Upload output
+      - name: Start release archive
+        shell: bash
+        run: |
+          cp xgcc gcc
+          tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} cc1 gcc cc1plus g++
+      - name: Clean
+        shell: bash
+        run: |
+          make clean
+      - name: Configure for mips
+        shell: bash
+        run: |
+          ./configure --target=mips --prefix=/opt/cross --with-gnu-as --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
+      - name: Make cpp
+        continue-on-error: true
+        shell: bash
+        run: |
+          make cpp CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+      - name: Add cpp to release archive
+        shell: bash
+        run: |
+          tar -rzf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp
+      - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
           name: cc1-${{ matrix.TARGET.OS }}
           path: |
-            cpp
-            cc1
-            xgcc
-            cc1plus
-            g++
-      - name: Create release archive
-        shell: bash
-        run: |
-          cp xgcc gcc
-          tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp cc1 gcc cc1plus g++
+            ${{ matrix.TARGET.ARCHIVE_NAME }}
       - name: Update release
         uses: johnwbyrd/update-release@v1.0.0
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
