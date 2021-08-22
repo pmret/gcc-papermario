@@ -55,7 +55,7 @@ jobs:
         shell: bash
         run: |
           cp xgcc gcc
-          tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} cc1 gcc cc1plus g++
+          tar -cf ${{ matrix.TARGET.ARCHIVE_NAME }} cc1 gcc cc1plus g++
       - name: Clean
         shell: bash
         run: |
