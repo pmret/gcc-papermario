@@ -3923,11 +3923,6 @@ do {									\
   fprintf ((STREAM), "\"\n");						\
 } while (0)
 
-#define ASM_OUTPUT_SECTION_NAME(FILE, DECL, NAME, RELOC)\
-  do {						\
-    fprintf (FILE, "\t.section %s\n", NAME);	\
-  } while (0)
-
 /* Handle certain cpp directives used in header files on sysV.  */
 #define SCCS_DIRECTIVE
 
