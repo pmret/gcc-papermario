@@ -4074,8 +4074,3 @@ while (0)
    true.  */
 
 #define DONT_ACCESS_GBLS_AFTER_EPILOGUE (TARGET_ABICALLS && mips_abi != ABI_32)
-
-#define ASM_OUTPUT_SECTION_NAME(FILE, DECL, NAME, RELOC)\
-  do {						\
-    fprintf (FILE, "\t.section %s\n", NAME);	\
-  } while (0)
