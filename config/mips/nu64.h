@@ -129,3 +129,4 @@ sdata_section ()							\
 %{EL:-UMIPSEB -U_MIPSEB -U__MIPSEB -U__MIPSEB__ -D_MIPSEL -D__MIPSEL -D__MIPSEL__ %{!ansi:-DMIPSEL}} \
 %(long_max_spec) \
 %(subtarget_cpp_spec) "
+
