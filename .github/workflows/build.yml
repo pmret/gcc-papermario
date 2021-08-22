@@ -48,6 +48,8 @@ jobs:
           make cpp CFLAGS="${{ matrix.TARGET.CFLAGS }}"
           make cc1 CFLAGS="${{ matrix.TARGET.CFLAGS }}"
           make xgcc CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+          make cc1plus CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+          make g++ CFLAGS="${{ matrix.TARGET.CFLAGS }}"
       - name: Test for file
         shell: bash
         run: |
@@ -58,15 +60,16 @@ jobs:
         with:
           name: cc1-${{ matrix.TARGET.OS }}
           path: |
-            as
             cpp
             cc1
             xgcc
+            cc1plus
+            g++
       - name: Create release archive
         shell: bash
         run: |
           cp xgcc gcc
-          tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp cc1 gcc
+          tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp cc1 gcc cc1plus g++
       - name: Update release
         uses: johnwbyrd/update-release@v1.0.0
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
