@@ -12,12 +12,14 @@ jobs:
           - {
               OS: 'ubuntu-latest',
               CFLAGS: '-std=gnu89 -m32 -static',
-              HOST: 'i386-pc-linux'
+              HOST: 'i386-pc-linux',
+              ARCHIVE_NAME: 'linux.tar.gz'
             }
           - {
               OS: 'macos-latest',
               CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
-              HOST: 'i386-apple-darwin'
+              HOST: 'i386-apple-darwin',
+              ARCHIVE_NAME: 'mac.tar.gz'
             }
 
     name: Building cc1 for ${{ matrix.TARGET.OS }}
@@ -60,3 +62,14 @@ jobs:
             cpp
             cc1
             xgcc
+      - name: Create release archive
+        shell: bash
+        run: |
+          cp xgcc gcc
+          tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp cc1 gcc
+      - name: Update release
+        uses: johnwbyrd/update-release@v1.0.0
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: ${{ matrix.TARGET.ARCHIVE_NAME }}
