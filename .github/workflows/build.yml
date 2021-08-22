@@ -72,7 +72,8 @@ jobs:
       - name: Add cpp to release archive
         shell: bash
         run: |
-          tar -uzf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp
+          tar -uf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp
+          tar -z ${{ matrix.TARGET.ARCHIVE_NAME }}
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
