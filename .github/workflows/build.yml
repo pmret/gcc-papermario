@@ -55,25 +55,7 @@ jobs:
         shell: bash
         run: |
           cp xgcc gcc
-          tar -cf ${{ matrix.TARGET.ARCHIVE_NAME }} cc1 gcc cc1plus g++
-      - name: Clean
-        shell: bash
-        run: |
-          make clean
-      - name: Configure for mips
-        shell: bash
-        run: |
-          ./configure --target=mips --prefix=/opt/cross --with-gnu-as --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
-      - name: Make cpp
-        continue-on-error: true
-        shell: bash
-        run: |
-          make cpp CFLAGS="${{ matrix.TARGET.CFLAGS }}"
-      - name: Add cpp to release archive
-        shell: bash
-        run: |
-          tar -uf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp
-          gzip -9 ${{ matrix.TARGET.ARCHIVE_NAME }}
+          tar -cf ${{ matrix.TARGET.ARCHIVE_NAME }} cc1 gcc cc1plus g++ cpp
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
