@@ -1172,6 +1172,11 @@ kanjienv_check ()
 {
   char  *n64kanji_env;
   n64kanji_env = getenv("N64GCC_KANJI");
+  if ( !n64kanji_env ) {
+    n64kanji_flag = KANJI_OFF;
+    return;
+  }
+
   if ( !strcasecmp( n64kanji_env, "SJIS" ) ) {
     n64kanji_flag = KANJI_SJIS;
   } else if ( !strcasecmp( n64kanji_env, "EUC" ) ) {
