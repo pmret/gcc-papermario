@@ -61,10 +61,10 @@ jobs:
         with:
           name: gcc-2.8.1-${{ matrix.TARGET.OS }}
           path: |
-            ${{ matrix.TARGET.ARCHIVE_NAME }}.gz
+            ${{ matrix.TARGET.ARCHIVE_NAME }}
       - name: Update release
         uses: johnwbyrd/update-release@v1.0.0
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: ${{ matrix.TARGET.ARCHIVE_NAME }}.gz
+          files: ${{ matrix.TARGET.ARCHIVE_NAME }}
