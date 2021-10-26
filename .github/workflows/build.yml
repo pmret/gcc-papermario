@@ -13,13 +13,13 @@ jobs:
               OS: 'ubuntu-latest',
               CFLAGS: '-std=gnu89 -m32 -static',
               HOST: 'i386-pc-linux',
-              ARCHIVE_NAME: 'linux.tar'
+              ARCHIVE_NAME: 'linux.tar.gz'
             }
           - {
               OS: 'macos-latest',
               CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
               HOST: 'i386-apple-darwin',
-              ARCHIVE_NAME: 'mac.tar'
+              ARCHIVE_NAME: 'mac.tar.gz'
             }
 
     name: Building gcc for ${{ matrix.TARGET.OS }}
@@ -41,39 +41,21 @@ jobs:
         shell: bash
         run: |
           ./configure --target=mips-nintendo-nu64 --prefix=/opt/cross --with-gnu-as --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
-      - name: Make everything except cpp
+      - name: Make everything
         continue-on-error: true
         shell: bash
         run: |
           make cpp cc1 xgcc cc1plus g++ CFLAGS="${{ matrix.TARGET.CFLAGS }}"
-      - name: Test for file
+      - name: Test for cc1
         shell: bash
         run: |
           test -f cc1
           file cc1
-      - name: Start release archive
+      - name: Create release archive
         shell: bash
         run: |
           cp xgcc gcc
-          tar -cf ${{ matrix.TARGET.ARCHIVE_NAME }} cc1 gcc cc1plus g++
-      - name: Clean
-        shell: bash
-        run: |
-          make clean
-      - name: Configure for mips
-        shell: bash
-        run: |
-          ./configure --target=mips --prefix=/opt/cross --with-gnu-as --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
-      - name: Make cpp
-        continue-on-error: true
-        shell: bash
-        run: |
-          make cpp CFLAGS="${{ matrix.TARGET.CFLAGS }}"
-      - name: Add cpp to release archive
-        shell: bash
-        run: |
-          tar -uf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp
-          gzip -9 ${{ matrix.TARGET.ARCHIVE_NAME }}
+          tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp cc1 gcc cc1plus g++
       - name: Upload archive
         uses: actions/upload-artifact@v2
         with:
