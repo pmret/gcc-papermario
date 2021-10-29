@@ -32,11 +32,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y build-essential bison file gperf
-          echo "deb http://old-releases.ubuntu.com/ubuntu zesty main" | sudo tee /etc/apt/sources.list.d/zesty.list
+          # echo "deb http://old-releases.ubuntu.com/ubuntu zesty main" | sudo tee /etc/apt/sources.list.d/zesty.list
           sudo apt-add-repository -r universe
           sudo apt update
-          sudo apt install -y gcc-6 gcc-6-multilib
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 1
+          # sudo apt install -y gcc-6 gcc-6-multilib
+          # sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 1
       - name: Configure for mips-nintendo-nu64
         shell: bash
         run: |
