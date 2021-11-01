@@ -116,7 +116,7 @@ typedef struct dw_fde_struct
 dw_fde_node;
 
 /* Maximum size (in bytes) of an artificially generated label.   */
-#define MAX_ARTIFICIAL_LABEL_BYTES	30
+#define MAX_ARTIFICIAL_LABEL_BYTES	60
 
 /* Make sure we know the sizes of the various types dwarf can describe. These
    are only defaults.  If the sizes are different for your target, you should
@@ -249,17 +249,17 @@ static unsigned reg_number		PROTO((rtx));
 #endif
 
 #ifndef FUNC_BEGIN_LABEL
-#define FUNC_BEGIN_LABEL	"LFB"
+#define FUNC_BEGIN_LABEL	"_D_LFB"
 #endif
 #ifndef FUNC_END_LABEL
-#define FUNC_END_LABEL		"LFE"
+#define FUNC_END_LABEL		"_D_LFE"
 #endif
-#define CIE_AFTER_SIZE_LABEL	"LSCIE"
-#define CIE_END_LABEL		"LECIE"
-#define CIE_LENGTH_LABEL	"LLCIE"
-#define FDE_AFTER_SIZE_LABEL	"LSFDE"
-#define FDE_END_LABEL		"LEFDE"
-#define FDE_LENGTH_LABEL	"LLFDE"
+#define CIE_AFTER_SIZE_LABEL	"_D_LSCIE"
+#define CIE_END_LABEL		"_D_LECIE"
+#define CIE_LENGTH_LABEL	"_D_LLCIE"
+#define FDE_AFTER_SIZE_LABEL	"_D_LSFDE"
+#define FDE_END_LABEL		"_D_LEFDE"
+#define FDE_LENGTH_LABEL	"_D_LLFDE"
 
 /* Definitions of defaults for various types of primitive assembly language
    output operations.  These may be overridden from within the tm.h file,
@@ -730,7 +730,7 @@ dwarf2out_cfi_label ()
   static char label[20];
   static unsigned long label_num = 0;
   
-  ASM_GENERATE_INTERNAL_LABEL (label, "LCFI", label_num++);
+  ASM_GENERATE_INTERNAL_LABEL (label, "_D_LCFI", label_num++);
   ASM_OUTPUT_LABEL (asm_out_file, label);
 
   return label;
@@ -2478,25 +2478,25 @@ static char text_end_label[MAX_ARTIFICIAL_LABEL_BYTES];
 #define BSS_END_LABEL           "Lebss"
 #endif
 #ifndef INSN_LABEL_FMT
-#define INSN_LABEL_FMT		"LI%u_"
+#define INSN_LABEL_FMT		"_D_LI%u_"
 #endif
 #ifndef BLOCK_BEGIN_LABEL
-#define BLOCK_BEGIN_LABEL	"LBB"
+#define BLOCK_BEGIN_LABEL	"_D_LBB"
 #endif
 #ifndef BLOCK_END_LABEL
-#define BLOCK_END_LABEL		"LBE"
+#define BLOCK_END_LABEL		"_D_LBE"
 #endif
 #ifndef BODY_BEGIN_LABEL
-#define BODY_BEGIN_LABEL	"Lbb"
+#define BODY_BEGIN_LABEL	"_D_Lbb"
 #endif
 #ifndef BODY_END_LABEL
-#define BODY_END_LABEL		"Lbe"
+#define BODY_END_LABEL		"_D_Lbe"
 #endif
 #ifndef LINE_CODE_LABEL
-#define LINE_CODE_LABEL		"LM"
+#define LINE_CODE_LABEL		"_D_LM"
 #endif
 #ifndef SEPARATE_LINE_CODE_LABEL
-#define SEPARATE_LINE_CODE_LABEL	"LSM"
+#define SEPARATE_LINE_CODE_LABEL	"_D_LSM"
 #endif
 
 /* Convert a reference to the assembler name of a C-level name.  This
