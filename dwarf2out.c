@@ -4918,6 +4918,7 @@ output_abbrev_section ()
 
       fprintf (asm_out_file, "\t%s\t0,0\n", ASM_BYTE_OP);
     }
+  fprintf (asm_out_file, "\t%s\t0\n", ASM_BYTE_OP);
 }
 
 /* Output location description stack opcode's operands (if any).  */
