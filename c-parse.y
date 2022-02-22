@@ -1278,7 +1278,7 @@ notype_declarator:
 
 structsp:
 	  STRUCT identifier '{'
-		{ $$ = start_struct (RECORD_TYPE, $2);
+		{ $<ttype>$ = start_struct (RECORD_TYPE, $2);
 		  /* Start scope of tag before parsing components.  */
 		}
 	  component_decl_list '}' maybe_attribute 
@@ -1290,7 +1290,7 @@ structsp:
 	| STRUCT identifier
 		{ $$ = xref_tag (RECORD_TYPE, $2); }
 	| UNION identifier '{'
-		{ $$ = start_struct (UNION_TYPE, $2); }
+		{ $<ttype>$ = start_struct (UNION_TYPE, $2); }
 	  component_decl_list '}' maybe_attribute
 		{ $$ = finish_struct ($<ttype>4, $5, $7); }
 	| UNION '{' component_decl_list '}' maybe_attribute
@@ -1301,13 +1301,13 @@ structsp:
 		{ $$ = xref_tag (UNION_TYPE, $2); }
 	| ENUM identifier '{'
 		{ $<itype>3 = suspend_momentary ();
-		  $$ = start_enum ($2); }
+		  $<ttype>$ = start_enum ($2); }
 	  enumlist maybecomma_warn '}' maybe_attribute
 		{ $$ = finish_enum ($<ttype>4, nreverse ($5), $8);
 		  resume_momentary ($<itype>3); }
 	| ENUM '{'
 		{ $<itype>2 = suspend_momentary ();
-		  $$ = start_enum (NULL_TREE); }
+		  $<ttype>$ = start_enum (NULL_TREE); }
 	  enumlist maybecomma_warn '}' maybe_attribute
 		{ $$ = finish_enum ($<ttype>3, nreverse ($4), $7);
 		  resume_momentary ($<itype>2); }
@@ -1359,11 +1359,10 @@ component_decl:
 		  prefix_attributes = TREE_PURPOSE (declspec_stack);
 		  declspec_stack = TREE_CHAIN (declspec_stack);
 		  resume_momentary ($2); }
-	| typed_typespecs
+	| typed_typespecs setspecs save_filename save_lineno
 		{ if (pedantic)
 		    pedwarn ("ANSI C forbids member declarations with no members");
-		  shadow_tag($1);
-		  $$ = NULL_TREE; }
+		  $$ = grokfield($3, $4, NULL, current_declspecs, NULL_TREE); }
 	| nonempty_type_quals setspecs components
 		{ $$ = $3;
 		  current_declspecs = TREE_VALUE (declspec_stack);
