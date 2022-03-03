@@ -81,6 +81,8 @@ Boston, MA 02111-1307, USA.  */
 #include "defaults.h"
 #include "output.h" /* ASM_OUTPUT_SOURCE_LINE may refer to sdb functions.  */
 
+char *current_function_name;
+
 #ifndef errno
 extern int errno;
 #endif
@@ -563,7 +565,6 @@ dbxout_source_line (file, filename, lineno)
      int lineno;
 {
   dbxout_source_file (file, filename);
-
 #ifdef ASM_OUTPUT_SOURCE_LINE
   ASM_OUTPUT_SOURCE_LINE (file, lineno);
 #else
@@ -1670,6 +1671,7 @@ dbxout_symbol (decl, local)
 		 IDENTIFIER_POINTER (DECL_ASSEMBLER_NAME (decl)),
 		 IDENTIFIER_POINTER (DECL_NAME (context)));
 
+      current_function_name = IDENTIFIER_POINTER (DECL_ASSEMBLER_NAME (decl));
       dbxout_finish_symbol (decl);
       break;
 
