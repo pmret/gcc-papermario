@@ -7,11 +7,11 @@ To build the 32-bit static cc1 in the [papermario](https://github.com/ethteck/pa
 > ```
 > Configure:
 > ```bash
-> ./configure --target=mips-nintendo-nu64 --prefix=/opt/cross --disable-gprof --disable-gdb --disable-werror --host=i386-pc-linux --build=i386-pc-linux
+> ./configure --target=mips-nintendo-nu64 --prefix=/opt/cross --with-gnu-as --disable-gprof --disable-gdb --disable-werror --host=i386-pc-linux --build=i386-pc-linux
 > ```
 > Make:
 > ```bash
-> make CFLAGS="-std=gnu89 -m32 -static"
+> make cpp cc1 xgcc cc1plus g++ CFLAGS="-std=gnu89 -m32 -static"
 > ```
 > The `make` stage may fail, but this is fine as long as the `cc1` binary is created successfully.
 
@@ -22,7 +22,7 @@ To build the 64-bit cc1 for macOS, use:
 > ```
 > Make:
 > ```bash
-> make CFLAGS="-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration"
+> make cpp cc1 xgcc cc1plus g++ CFLAGS="-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration"
 > ```
 > The `make` stage may fail, but this is fine as long as the `cc1` binary is created successfully.
 
