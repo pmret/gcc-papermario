@@ -4659,7 +4659,7 @@ size_of_line_info ()
 	  size += size_of_uleb128 (current_file);
 	}
 
-      if (line_info->dw_line_num != current_line)
+      //if (line_info->dw_line_num != current_line)
 	{
 	  line_offset = line_info->dw_line_num - current_line;
 	  line_delta = line_offset - DWARF_LINE_BASE;
