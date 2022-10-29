@@ -39,6 +39,8 @@ Boston, MA 02111-1307, USA.  */
 #undef TARGET_VERSION
 #define TARGET_VERSION fprintf (stderr, " (MIPS GNU/ELF)");
 
+extern char *current_function_name;
+
 /* Output at beginning of assembler file.  */
 /* The .file command should always begin the output.  */
 #undef ASM_FILE_START
@@ -60,8 +62,8 @@ Boston, MA 02111-1307, USA.  */
 #define ASM_OUTPUT_SOURCE_LINE(FILE, LINE)				\
   do {									\
       ++sym_lineno;							\
-      fprintf ((FILE), ".LM%d:\n\t%s %d,0,%d,.LM%d\n",			\
-	       sym_lineno, ASM_STABN_OP, N_SLINE, (LINE), sym_lineno);	\
+      fprintf ((FILE), ".LM%d:\n\t%s %d,0,%d,.LM%d-%s\n",			\
+	       sym_lineno, ASM_STABN_OP, N_SLINE, (LINE), sym_lineno, current_function_name);	\
   } while (0)
 
 #undef ASM_DECLARE_FUNCTION_NAME
