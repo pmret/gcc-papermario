@@ -11,13 +11,13 @@ jobs:
         TARGET:
           - {
               OS: 'ubuntu-latest',
-              CFLAGS: '-std=gnu89 -m32 -static',
+              CFLAGS: '-std=gnu89 -m32 -static -O3',
               HOST: 'i386-pc-linux',
               ARCHIVE_NAME: 'linux.tar.gz'
             }
           - {
               OS: 'macos-latest',
-              CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
+              CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration -O3',
               HOST: 'i386-apple-darwin',
               ARCHIVE_NAME: 'mac.tar.gz'
             }
