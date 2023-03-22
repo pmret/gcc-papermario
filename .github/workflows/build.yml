@@ -21,6 +21,12 @@ jobs:
               HOST: 'i386-apple-darwin',
               ARCHIVE_NAME: 'mac.tar.gz'
             }
+          - {
+              OS: 'macos-latest',
+              CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
+              HOST: 'arm64-apple-darwin',
+              ARCHIVE_NAME: 'mac-arm64.tar.gz'
+            }
 
     name: Building gcc for ${{ matrix.TARGET.OS }}
     steps:
