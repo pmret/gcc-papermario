@@ -16,7 +16,7 @@ jobs:
               ARCHIVE_NAME: 'linux.tar.gz'
             }
           - {
-              OS: 'macos-latest',
+              OS: 'macos-13',
               CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
               HOST: 'i386-apple-darwin',
               ARCHIVE_NAME: 'mac.tar.gz'
@@ -24,7 +24,7 @@ jobs:
 
     name: Building gcc for ${{ matrix.TARGET.OS }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Install dependencies (Ubuntu)
         shell: bash
@@ -57,7 +57,7 @@ jobs:
           cp xgcc gcc
           tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} cpp cc1 gcc cc1plus g++
       - name: Upload archive
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: gcc-2.8.1-${{ matrix.TARGET.OS }}
           path: |
