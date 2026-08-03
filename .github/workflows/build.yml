@@ -16,9 +16,9 @@ jobs:
               ARCHIVE_NAME: 'linux.tar.gz'
             }
           - {
-              OS: 'macos-13',
+              OS: 'macos-latest',
               CFLAGS: '-std=gnu89 -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
-              HOST: 'i386-apple-darwin',
+              HOST: 'aarch64-apple-darwin',
               ARCHIVE_NAME: 'mac.tar.gz'
             }
 
@@ -45,7 +45,7 @@ jobs:
         continue-on-error: true
         shell: bash
         run: |
-          make cpp cc1 xgcc cc1plus g++ CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+          make cpp cc1 xgcc cc1plus g++ CFLAGS="${{ matrix.TARGET.CFLAGS }}" BISON=true
       - name: Test for cc1
         shell: bash
         run: |
